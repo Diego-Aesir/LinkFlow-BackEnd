@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+
+
+*.user
+*.suo
+*.userosscache
+
+.vs/
+
+*.csproj.user
