@@ -15,7 +15,7 @@ namespace PostsAPI.Controllers
             _postCommands = postCommands;
         }
 
-        [HttpPost("/createPost")]
+        [HttpPost("createPost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreatePost([FromBody] PostsDTO newPost)
@@ -28,7 +28,7 @@ namespace PostsAPI.Controllers
             return Ok(await _postCommands.CreatePost(createPost));
         }
 
-        [HttpGet("/{postId}")]
+        [HttpGet("{postId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetPost(string postId)
@@ -42,7 +42,7 @@ namespace PostsAPI.Controllers
             return Ok(post);
         }
 
-        [HttpGet("/recentPosts/{page}/{limit}")]
+        [HttpGet("recentPosts/{page}/{limit}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetRecentPosts(int page, int limit)
@@ -56,7 +56,7 @@ namespace PostsAPI.Controllers
             return Ok(list);
         }
 
-        [HttpGet("/recentPosts/FromTags/{page}/{limit}")]
+        [HttpGet("recentPosts/FromTags/{page}/{limit}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -76,7 +76,7 @@ namespace PostsAPI.Controllers
             return Ok(list);
         }
 
-        [HttpGet("/recentPosts/{userId}/{page}/{limit}")]
+        [HttpGet("recentPosts/FromUser:{userId}/{page}/{limit}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetRecentPostsFromUser(int page, int limit, string userId)
@@ -90,7 +90,7 @@ namespace PostsAPI.Controllers
             return Ok(list);
         }
 
-        [HttpGet("/recentPosts/FromTitle/{page}/{limit}")]
+        [HttpGet("recentPosts/FromTitle/{page}/{limit}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -110,7 +110,7 @@ namespace PostsAPI.Controllers
             return Ok(list);
         }
 
-        [HttpPut("/updatePost/{postId}")]
+        [HttpPut("updatePost/{postId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> UpdatePost(string postId, [FromBody] PostsDTO post)
@@ -129,7 +129,7 @@ namespace PostsAPI.Controllers
             return Ok(updatedPost);
         }
 
-        [HttpDelete("/deletePost/{userId}/{postId}")]
+        [HttpDelete("deletePost/{userId}/{postId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeletePost(string userId, string postId)
