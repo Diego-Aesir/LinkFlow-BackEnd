@@ -14,5 +14,9 @@ namespace UserAPI.Interfaces
         public Task<User> UpdateUserAsync(string id, UpdateUser updatedUser);
 
         public Task<bool> DeleteUserAsync(string id);
+
+        public Task<User> LoginUser(string username, string password);
+
+        public Task<User> LoginUserWithGoogle(string username);
     }
 }

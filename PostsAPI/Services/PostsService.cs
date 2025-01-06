@@ -72,12 +72,17 @@ namespace PostsAPI.Services
                                  .ToListAsync();
         }
 
-        public async Task<Posts> UpdatePostAsync(string id, PostsDTO updatedPost)
+        public async Task<Posts> UpdatePostAsync(string id, string ownerId, PostsDTO updatedPost)
         {
             Posts foundPost = await GetPostAsync(id);
             if(foundPost == null)
             {
                 throw new Exception("Post not found");
+            }
+
+            if(foundPost.OwnerId != ownerId)
+            {
+                throw new Exception("Not the owner");
             }
 
             Posts postCopy = new Posts

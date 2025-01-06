@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using CommentsAPI.Model;
 using CommentsAPI.DTO;
+using Microsoft.AspNetCore.Cors;
 
 namespace CommentsAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("SercurityPolicy")]
     public class CommentController : ControllerBase
     {
         public readonly ICommentService _commentService;
@@ -20,55 +22,86 @@ namespace CommentsAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateComment([FromBody] CommentReceived commentReceived)
         {
-            Comment comment = await _commentService.CreateComment(commentReceived.createCommentModel());
-            if (comment == null || comment.Id == null)
+            try
             {
-                return BadRequest("Could not create this comment");
-            }
+                Comment comment = await _commentService.CreateComment(commentReceived.createCommentModel());
+                if (comment == null || comment.Id == null)
+                {
+                    return BadRequest("Could not create this comment");
+                }
 
-            return Ok(comment);
+                return Ok(comment);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetCommentFromCommentId:{commentId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCommentById(string commentId)
         {
-            Comment found = await _commentService.GetCommentById(commentId);
-            if (found == null)
+            try
             {
-                return NotFound("Comment with given Id wasn't found");
-            }
+                Comment found = await _commentService.GetCommentById(commentId);
+                if (found == null)
+                {
+                    return NotFound("Comment with given Id wasn't found");
+                }
 
-            return Ok(found);
+                return Ok(found);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetCommentsIdFromPostId:{postId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCommentByPostId(string postId)
         {
-            List<Comment> list = await _commentService.GetCommentsFromPost(postId);
-            if (list == null)
+            try
             {
-                return NotFound("Comments Id could not be found");
-            }
+                List<Comment> list = await _commentService.GetCommentsFromPost(postId);
+                if (list == null)
+                {
+                    return NotFound("Comments Id could not be found");
+                }
 
-            return Ok(list);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetCommentsIdFromUser:{userId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCommentByUserId(string userId)
         {
-            List<Comment> list = await _commentService.GetCommentsFromUser(userId);
-            if (list == null)
+            try
             {
-                return NotFound("Comments Id could not be found");
-            }
+                List<Comment> list = await _commentService.GetCommentsFromUser(userId);
+                if (list == null)
+                {
+                    return NotFound("Comments Id could not be found");
+                }
 
-            return Ok(list);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("UpdateCommentText:{commentId}")]

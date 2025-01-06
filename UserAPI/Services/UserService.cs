@@ -50,12 +50,13 @@ namespace UserAPI.Services
 
         public async Task<User> UpdateUserAsync(string id, UpdateUser updatedUser)
         {
-            User foundUser = await GetUserAsync(id);
+            var foundUser = await GetUserAsync(id);
             if (foundUser == null) 
             {
                 throw new Exception("User not found");
             }
-            User userCopy = new User
+            string oldName = foundUser.UserName;
+            User userCopy = new()
             {
                 Id = id,
                 UserName = string.IsNullOrEmpty(updatedUser.UserName) ? foundUser.UserName : updatedUser.UserName,
@@ -68,7 +69,12 @@ namespace UserAPI.Services
                 Photo = string.IsNullOrEmpty(updatedUser.Photo) ? foundUser.Photo : updatedUser.Photo
             };
             await _usersCollection.ReplaceOneAsync(x =>  x.Id == id, userCopy);
-            return await GetUserAsync(id);
+            foundUser = await GetUserAsync(id);
+            if (foundUser == null)
+            {
+                throw new Exception("User not found");
+            }
+            return foundUser;
         }
 
         public async Task<bool> DeleteUserAsync(string id)
@@ -76,6 +82,45 @@ namespace UserAPI.Services
             await _usersCollection.DeleteOneAsync(user => user.Id == id);
             var user = await GetUserAsync(id);
             return user == null ? true : false;
+        }
+
+        public async Task<User> LoginUser(string username, string password)
+        {
+            var foundUser = await GetUserAsyncByUsername(username);
+            if (foundUser == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (foundUser.IsGoogle == true)
+            {
+                throw new Exception("User was registered with Google");
+            }
+
+            if (BCrypt.Net.BCrypt.Verify(password, foundUser.Password))
+            {
+                return foundUser;
+            }
+            else
+            {
+                throw new Exception("Password not valid");
+            }
+        }
+
+        public async Task<User> LoginUserWithGoogle(string username)
+        {
+            var foundUser = await GetUserAsyncByUsername(username);
+            if (foundUser == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (foundUser.IsGoogle == false) 
+            {
+                throw new Exception("User is not registered by Google");
+            }
+
+             return foundUser;
         }
     }
 }

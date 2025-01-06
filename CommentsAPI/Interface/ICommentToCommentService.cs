@@ -7,6 +7,8 @@ namespace CommentsAPI.Interface
     {
         public Task<CommentToComment> AddCommentToComment(string commentId, CommentToComment newComment);
 
+        public Task<CommentToComment> InsertCommentToComment(string commentId, string newCommentId);
+
         public Task<CommentToComment> GetCommentOfCommentFromId(string commentId);
 
         public Task<List<CommentToComment>> GetCommentsToCommentsFromUserId(string userId);

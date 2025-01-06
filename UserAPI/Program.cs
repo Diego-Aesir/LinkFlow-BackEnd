@@ -12,6 +12,16 @@ builder.Services.Configure<LinkFlowUsersDatabaseSettings>(builder.Configuration.
 
 builder.Services.AddSingleton<IUserService, UserService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SecurityPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:6060", "http://localhost:6061")
+        .WithMethods("GET", "POST", "PUT", "DELETE")
+        .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -22,6 +32,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseCors("SecurityPolicy");
 
 app.UseAuthorization();
 

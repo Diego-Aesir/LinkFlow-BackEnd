@@ -17,7 +17,7 @@ namespace PostsAPI.Interface
 
         public Task<List<Posts>> GetPostsFromTitle(List<string> titles, int page, int limit);
 
-        public Task<Posts> UpdatePostAsync(string id, PostsDTO updatedPost);
+        public Task<Posts> UpdatePostAsync(string id, string ownerId, PostsDTO updatedPost);
 
         public Task<bool> DeletePostAsync(string postId, string ownerId);
     }

@@ -1,12 +1,14 @@
 ﻿using CommentsAPI.DTO;
 using CommentsAPI.Interface;
 using CommentsAPI.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommentsAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("SercurityPolicy")]
     public class CommentToCommentController : ControllerBase
     {
         ICommentToCommentService _commentService;
@@ -41,46 +43,69 @@ namespace CommentsAPI.Controllers
         }
 
         [HttpGet("GetCommentOfComment:{commentId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCommentOfCommentFromId(string commentId)
         {
-            CommentToComment comment = await _commentService.GetCommentOfCommentFromId(commentId);
-            if (comment == null)
+            try
             {
-                return NotFound("Comment could not be found");
-            }
+                CommentToComment comment = await _commentService.GetCommentOfCommentFromId(commentId);
+                if (comment == null)
+                {
+                    return NotFound("Comment could not be found");
+                }
 
-            return Ok(comment);
+                return Ok(comment);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetCommentOfCommentFromUserId:{userId}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCommentsToCommentsFromUserId(string userId)
         {
-            List<CommentToComment> comment = await _commentService.GetCommentsToCommentsFromUserId(userId);
-            if (comment == null)
+            try
             {
-                return NotFound("The provided userId doesn't have a comment");
-            }
+                List<CommentToComment> comment = await _commentService.GetCommentsToCommentsFromUserId(userId);
+                if (comment == null)
+                {
+                    return NotFound("The provided userId doesn't have a comment");
+                }
 
-            return Ok(comment);
+                return Ok(comment);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("UpdateCommentText:{commentId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> UpdateCommentOfCommentText(string commentId, string text)
+        public async Task<ActionResult> UpdateCommentOfCommentText(string commentId, [FromBody] string text)
         {
-            CommentToComment comment = await _commentService.UpdateCommentOfCommentText(commentId, text);
-            if (comment == null)
+            try
             {
-                return NotFound("The provided commentId doesn't exist");
-            }
+                CommentToComment comment = await _commentService.UpdateCommentOfCommentText(commentId, text);
+                if (comment == null)
+                {
+                    return NotFound("The provided commentId doesn't exist");
+                }
 
-            return Ok(comment);
+                return Ok(comment);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("Owner:{ownerId}/DeleteCommentText:{commentId}")]
@@ -88,13 +113,20 @@ namespace CommentsAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteCommentTextById(string commentId, string ownerId)
         {
-            bool deleted = await _commentService.DeleteComment(commentId, ownerId);
-            if (!deleted)
+            try
             {
-                return BadRequest("Could not delete the given commentId");
-            }
+                bool deleted = await _commentService.DeleteComment(commentId, ownerId);
+                if (!deleted)
+                {
+                    return BadRequest("Could not delete the given commentId");
+                }
 
-            return Ok(deleted);
+                return Ok(deleted);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

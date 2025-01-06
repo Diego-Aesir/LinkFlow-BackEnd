@@ -1,7 +1,5 @@
-﻿using System.Xml.Linq;
-using CommentsAPI.Interface;
+﻿using CommentsAPI.Interface;
 using CommentsAPI.Model;
-using CommentsAPI.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 

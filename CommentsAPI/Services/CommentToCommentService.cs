@@ -25,7 +25,21 @@ namespace CommentsAPI.Services
             Comment comments = await _commentService.GetCommentById(commentId);
             if (comments == null)
             {
-                throw new Exception("Comment not found");
+                CommentToComment CmmtTComment = await GetCommentOfCommentFromId(commentId);
+                
+                if(CmmtTComment == null)
+                {
+                    throw new Exception("Comment not found");
+                }
+
+                await _comments.InsertOneAsync(newComment);
+                if (string.IsNullOrEmpty(newComment.Id))
+                {
+                    throw new Exception("Failed to create new comment");
+                }
+
+                await InsertCommentToComment(commentId, newComment.Id);
+                return newComment;
             }
 
             await _comments.InsertOneAsync(newComment);
@@ -36,6 +50,19 @@ namespace CommentsAPI.Services
 
             await _commentService.AddCommentToComment(commentId, newComment.Id);
             return newComment;
+        }
+
+        public async Task<CommentToComment> InsertCommentToComment(string commentId, string newCommentId)
+        {
+            CommentToComment comment = await GetCommentOfCommentFromId(commentId);
+            if (comment == null)
+            {
+                throw new Exception("Comment not found");
+            }
+            comment.CommentsId.Add(newCommentId);
+            await _comments.ReplaceOneAsync(comment => comment.Id == commentId, comment);
+
+            return comment;
         }
 
         public async Task<CommentToComment> GetCommentOfCommentFromId(string commentId)
